@@ -47,4 +47,13 @@ M.get_new_pane_id = function(panes_before, panes_after)
     return new_pane_id
 end
 
+M.create_pane = function()
+    local panes_before = M.cmd("tmux list-panes -F \"#{pane_id}\"")
+    M.cmd("tmux neww")
+    local panes_after = M.cmd("tmux list-panes -F \"#{pane_id}\"")
+    local new_pane_id = M.get_new_pane_id(panes_before, panes_after)
+    return new_pane_id
+end
+
+
 return M

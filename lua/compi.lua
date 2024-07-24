@@ -39,18 +39,13 @@ M.run = function()
     fn = fn:gsub("%%b", basename)
     fn = fn:gsub("%%d", dir)
 
-    local panes_before = utils.cmd("tmux list-panes -F \"#{pane_id}\"")
-    utils.cmd("tmux neww")
-    local panes_after = utils.cmd("tmux list-panes -F \"#{pane_id}\"")
-    local new_pane_id = utils.get_new_pane_id(panes_before, panes_after)
-    -- Output the new pane ID
+    local new_pane_id = utils.create_pane()
     if new_pane_id == nil then
         print("No new pane found")
         return
     end
-    print("New pane ID: " .. new_pane_id)
     utils.cmd("tmux send-keys -t " .. new_pane_id .. " '" .. fn .. "' Enter")
-    print("Finished compiling")
+    print("Ran " .. filename)
 end
 
 M.compnrun = function()
@@ -66,28 +61,17 @@ M.compnrun = function()
         return
     end
 
-    print("Compiling " .. filename .. "...")
-
     fn = fn:gsub("%%f", filename)
     fn = fn:gsub("%%b", basename)
     fn = fn:gsub("%%d", dir)
 
-    local panes_before = utils.cmd("tmux list-panes -F \"#{pane_id}\"")
-    local tmux = utils.cmd("echo $TMUX");
-    if true then
-        print(tmux)
-        return
-    end
-    utils.cmd("tmux neww")
-    local panes_after = utils.cmd("tmux list-panes -F \"#{pane_id}\"")
-    local new_pane_id = utils.get_new_pane_id(panes_before, panes_after)
-    -- Output the new pane ID
+    local new_pane_id = utils.create_pane()
     if new_pane_id == nil then
         print("No new pane found")
         return
     end
-    print("New pane ID: " .. new_pane_id)
     utils.cmd("tmux send-keys -t " .. new_pane_id .. " '" .. fn .. "' Enter")
+    print("Compiled and ran " .. filename)
 end
 
 M.compile = function()
@@ -103,8 +87,6 @@ M.compile = function()
         return
     end
 
-    print("Compiling " .. filename .. "...")
-
     fn = fn:gsub("%%f", filename)
     fn = fn:gsub("%%b", basename)
     fn = fn:gsub("%%d", dir)
@@ -118,8 +100,8 @@ M.compile = function()
 
     -- reads command output.
     local output = handle:read('*a')
+    print("Compiled " .. filename)
     if output == "" then
-        print("compiling finished!")
         return
     end
     -- Create a new buffer
